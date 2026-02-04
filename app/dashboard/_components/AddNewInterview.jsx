@@ -17,8 +17,7 @@ import { useUser } from "@clerk/nextjs";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import { chatSession } from "@/utils/GeminiAIModel";
-import { db } from "@/utils/db";
-import { MockInterview } from "@/utils/schema";
+import axios from "axios";
 
 const AddNewInterview = () => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -54,22 +53,18 @@ const AddNewInterview = () => {
     setJsonResponse(MockjsonResp);
 
     if (MockjsonResp) {
-      const resp = await db
-        .insert(MockInterview)
-        .values({
-          mockId: uuidv4(),
-          jsonMockResp: MockjsonResp,
-          jobPosition: jobPosition,
-          jobDesc: jobDesc,
-          jobExperience: jobExperience,
-          createdBy: user?.primaryEmailAddress?.emailAddress,
-          createdAt: moment().format("DD-MM-YYYY"),
-        })
-        .returning({ mockId: MockInterview.mockId });
+      const resp = await axios.post("/api/mock-interview", {
+        jsonMockResp: MockjsonResp,
+        jobPosition,
+        jobDesc,
+        jobExperience,
+      });
 
-      if (resp) {
+      if (resp?.data?.mockId) {
         setOpenDialog(false);
-        router.push("/dashboard/interview/" + resp[0]?.mockId);
+        router.push("/dashboard/interview/" + resp.data.mockId);
+      } else {
+        console.error("Failed to create mock interview record", resp?.data);
       }
     } else {
       console.log("error");

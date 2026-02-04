@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, use } from "react";
-import { db } from "@/utils/db";
-import { MockInterview } from "@/utils/schema";
-import { eq } from "drizzle-orm";
+import axios from "axios";
 import QuestionsSection from "./_components/QuestionsSection";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
@@ -24,13 +22,12 @@ const StartInterview = ({ params: paramsPromise }) => {
   useEffect(() => {
     const GetInterviewDetails = async () => {
       try {
-        const result = await db
-          .select()
-          .from(MockInterview)
-          .where(eq(MockInterview.mockId, params.interviewId));
+        const res = await axios.get(
+          `/api/mock-interview?mockId=${params.interviewId}`
+        );
 
-        if (result.length > 0) {
-          const data = result[0];
+        if (res.data) {
+          const data = res.data;
           setInterviewData(data);
 
           const parsedQuestions = JSON.parse(data.jsonMockResp);

@@ -5,14 +5,11 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Webcam from "react-webcam";
 import useSpeechToText from "react-hook-speech-to-text";
-import { Mic, User } from "lucide-react";
+import { Mic } from "lucide-react";
 import { toast } from "sonner";
 import { chatSession } from "@/utils/GeminiAIModel";
-import { UserAnswer } from "@/utils/schema";
+import axios from "axios";
 import { useUser } from "@clerk/nextjs";
-import moment from "moment";
-import { is } from "drizzle-orm";
-import { db } from "@/utils/db"; // must be present
 
 
 
@@ -36,6 +33,15 @@ const RecordAnswerSection = ({ mockQuestions, activeQuestionIndex,interviewData 
     continuous: true,
     useLegacyResults: false,
   });
+
+  useEffect(() => {
+    if (error) {
+      console.error("Speech-to-text error:", error);
+      toast.error(
+        "Speech recognition is not available or microphone permission was denied."
+      );
+    }
+  }, [error]);
 
   useEffect(() => {
     if (results.length > lastResultLength) {
@@ -125,10 +131,10 @@ setHasSavedAnswer(true);
       createdAt: moment().format("DD-MM-YYYY"),
     };
 
-    console.log("Inserting into DB:", payload);
+    console.log("Sending answer payload:", payload);
 
-    const rep = await db.insert(UserAnswer).values(payload);
-console.log("Insert response:", rep);
+    const rep = await axios.post("/api/user-answer", payload);
+    console.log("Insert response:", rep.data);
 
 
     toast.success("Your answer has been recorded successfully.");
