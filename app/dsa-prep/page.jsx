@@ -1,7 +1,8 @@
 "use client";
 import React, {useState, useMemo} from "react";
-import {BrainCircuit, ChevronDown, Code, Shuffle} from "lucide-react";
+import {BrainCircuit, ChevronDown, Code, Shuffle, Settings, Mail} from "lucide-react";
 import {Remarkable} from "remarkable";
+import Link from "next/link";
 
 import CodeMirror from "@uiw/react-codemirror";
 import {python} from "@codemirror/lang-python";
@@ -163,6 +164,15 @@ const DSAPrepPage = () => {
           <p className="text-gray-600 mt-2">
             Your personal AI-powered coach for Data Structures & Algorithms.
           </p>
+          {/* Email Settings Link */}
+          <Link 
+            href="/dsa-prep/settings"
+            className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-sm font-medium hover:from-indigo-600 hover:to-purple-700 transition-all shadow-md"
+          >
+            <Mail size={16} />
+            Get Daily Questions via Email
+            <Settings size={16} />
+          </Link>
         </header>
 
         <main>

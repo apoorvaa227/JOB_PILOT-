@@ -46,6 +46,20 @@ export const coursesTable=pgTable("courses",{
   bannerImageUrl:varchar().default(''),
    userEmail:varchar('userEmail').references(()=>userTable.email).notNull()
 })
+
+export const dsaPreferenceTable = pgTable("dsaPreference", {
+  id: serial("id").primaryKey(),
+  userEmail: varchar("userEmail", { length: 255 }).references(() => userTable.email).notNull(),
+  userName: varchar("userName", { length: 255 }),
+  topics: json("topics").notNull(), // Array of selected topics
+  frequency: varchar("frequency", { length: 50 }).notNull(), // "daily" or "weekly"
+  sendTime: varchar("sendTime", { length: 10 }).notNull(), // "07:00", "19:00", etc.
+  startDate: varchar("startDate", { length: 20 }).notNull(),
+  endDate: varchar("endDate", { length: 20 }).notNull(),
+  isActive: boolean("isActive").default(true),
+  lastSentDate: varchar("lastSentDate", { length: 20 }),
+  createdAt: varchar("createdAt"),
+});
 export const enrollCourseTable = pgTable("enrollCourse", {
   id: serial("id").primaryKey(),
   cid: varchar("cid", { length: 255 }).references(() => coursesTable.cid),

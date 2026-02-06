@@ -5,11 +5,11 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import Webcam from "react-webcam";
 import useSpeechToText from "react-hook-speech-to-text";
-import { Mic } from "lucide-react";
+import { Mic, User } from "lucide-react";
 import { toast } from "sonner";
 import { chatSession } from "@/utils/GeminiAIModel";
-import axios from "axios";
 import { useUser } from "@clerk/nextjs";
+import axios from "axios";
 
 
 
@@ -17,7 +17,7 @@ const RecordAnswerSection = ({ mockQuestions, activeQuestionIndex,interviewData 
   const [userAnswer, setUserAnswer] = useState("");
   const [lastResultLength, setLastResultLength] = useState(0); // To avoid duplicate appends
   const {user}=useUser();
-  const[loading,setLoading]=useState(false);
+  const [loading,setLoading]=useState(false);
   const [hasSavedAnswer, setHasSavedAnswer] = useState(false);
 
 
@@ -33,15 +33,6 @@ const RecordAnswerSection = ({ mockQuestions, activeQuestionIndex,interviewData 
     continuous: true,
     useLegacyResults: false,
   });
-
-  useEffect(() => {
-    if (error) {
-      console.error("Speech-to-text error:", error);
-      toast.error(
-        "Speech recognition is not available or microphone permission was denied."
-      );
-    }
-  }, [error]);
 
   useEffect(() => {
     if (results.length > lastResultLength) {
@@ -118,7 +109,7 @@ setHasSavedAnswer(true);
       return;
     }
 
-    // Insert into DB
+    // Insert into DB via API
     const payload = {
       mockIdRef: interviewData.mockId,
       question: mockQuestions[activeQuestionIndex]?.question,
@@ -126,15 +117,12 @@ setHasSavedAnswer(true);
       userAns: userAnswer,
       feedback: JsonFeedbackResp.feedback,
       rating: JsonFeedbackResp.rating.toString(),
-
-      userEmail: user?.primaryEmailAddress?.emailAddress,
-      createdAt: moment().format("DD-MM-YYYY"),
     };
 
-    console.log("Sending answer payload:", payload);
+    console.log("Sending to API:", payload);
 
     const rep = await axios.post("/api/user-answer", payload);
-    console.log("Insert response:", rep.data);
+    console.log("API response:", rep.data);
 
 
     toast.success("Your answer has been recorded successfully.");
@@ -159,8 +147,9 @@ setHasSavedAnswer(true);
         {/* Webcam Feed */}
         <div className="rounded-lg overflow-hidden w-full max-w-md aspect-video border-2 border-primary">
           <Webcam
-            audio={true}
+            audio={false}
             mirrored={true}
+            muted={true}
             className="w-full h-full object-cover"
           />
         </div>

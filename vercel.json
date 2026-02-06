@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/send-dsa-emails",
+      "schedule": "0 7 * * *"
+    }
+  ]
+}

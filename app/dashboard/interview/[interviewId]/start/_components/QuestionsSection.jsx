@@ -4,6 +4,9 @@ import { Lightbulb, Volume2 } from "lucide-react";
 const QuestionsSection = ({ mockQuestions, activeQuestionIndex }) => {
   const texttoSpeech = (text) => {
     if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech first
+      window.speechSynthesis.cancel();
+      
       const speech = new SpeechSynthesisUtterance(text);
       speech.lang = 'en-US';
       speech.rate = 1;
