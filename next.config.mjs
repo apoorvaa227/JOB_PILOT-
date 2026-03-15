@@ -5,6 +5,9 @@ const nextConfig = {
     domains: ["firebasestorage.googleapis.com"],
   },
 
+  // Transpile packages that need to be processed by Next.js
+  transpilePackages: ['react-webcam'],
+
   // The new configuration to fix the 'canvas' module build error
   webpack: (config, {isServer}) => {
     // This is a workaround for a build issue with the 'canvas' package

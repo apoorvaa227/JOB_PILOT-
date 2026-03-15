@@ -1,13 +1,11 @@
 "use client";
-import { db } from "@/utils/db";
-import { MockInterview } from "@/utils/schema";
-import { eq } from "drizzle-orm";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Webcam from "react-webcam";
 import { Lightbulb, WebcamIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import axios from "axios";
 
 const Interview = () => {
   const [interviewData, setInterviewData] = useState(null);
@@ -21,12 +19,13 @@ const Interview = () => {
   }, [interviewId]);
 
   const GetInterviewDetails = async () => {
-    const result = await db
-      .select()
-      .from(MockInterview)
-      .where(eq(MockInterview.mockId, interviewId));
-      console.log(result);
-    setInterviewData(result[0]);
+    try {
+      const response = await axios.get(`/api/mock-interview?mockId=${interviewId}`);
+      console.log(response.data);
+      setInterviewData(response.data);
+    } catch (error) {
+      console.error("Error fetching interview details:", error);
+    }
   };
 
   if (!interviewData) {

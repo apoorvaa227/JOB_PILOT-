@@ -4,10 +4,11 @@ import { UserAnswer } from "@/utils/schema";
 import { eq } from "drizzle-orm";
 
 const FeedbackPage = async ({ params }) => {
+  const { interviewId } = await params;
   const feedbackList = await db
     .select()
     .from(UserAnswer)
-    .where(eq(UserAnswer.mockIdRef, params.interviewId))
+    .where(eq(UserAnswer.mockIdRef, interviewId))
     .orderBy(UserAnswer.id);
 
   return <ClientFeedback feedbackList={feedbackList} />;
